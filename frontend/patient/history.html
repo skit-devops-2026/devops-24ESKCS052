@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Medication History — MedRemind+</title><link rel="stylesheet" href="../css/style.css"><script src="../js/storage.js"></script><script src="../js/app.js"></script><script src="../js/patient.js"></script><script src="../js/reminders.js"></script><script src="../js/notifications.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+ const u=patientInit();if(!u)return;const filter=document.getElementById("statusFilter");
+ function render(){const meds=Store.get("medicines",[]);let logs=getLogsForPatient(u.id).slice().sort((a,b)=>b.date.localeCompare(a.date));if(filter.value!=="all")logs=logs.filter(l=>l.status===filter.value);document.getElementById("history").innerHTML=logs.length?logs.map(l=>{const m=meds.find(x=>x.id===l.medicineId);return `<tr><td>${formatDate(l.date)}</td><td>${m?.name||"Medicine"}</td><td>${formatTime(l.scheduledTime)}</td><td>${l.actualTime?formatTime(l.actualTime):"—"}</td><td>${statusLabel(l.status)}</td></tr>`}).join(""):`<tr><td colspan="5" class="muted">No records found.</td></tr>`;}
+ filter.onchange=render;render();
+});
+</script>
+</head><body>
+<header class="topbar"><div class="btn-row"><button class="icon-btn mobile-menu">☰</button><a class="brand" href="../patient/dashboard.html">MedRemind<span>+</span></a></div><div class="top-actions"><span class="muted" data-user-name></span><button class="btn btn-small" onclick="logout()">Logout</button></div></header>
+<div class="layout"><aside class="sidebar">
+    <div class="nav-title">Patient</div>
+    <nav class="nav">
+      <a href="../patient/dashboard.html">Dashboard</a>
+      <a href="../patient/medicines.html">My Medicines</a>
+      <a href="../patient/history.html">Medication History</a>
+      <a href="../patient/adherence.html">Adherence</a>
+      <a href="../patient/notifications.html">Notifications</a>
+      <a href="../patient/profile.html">Profile & Settings</a>
+    </nav></aside><main class="main">
+<div class="page-head"><div><h1>Medication History</h1><div class="muted">Previous dose events are kept as separate records.</div></div></div>
+<div class="search-row"><select id="statusFilter"><option value="all">All statuses</option><option value="taken">Taken</option><option value="missed">Missed</option><option value="snoozed">Snoozed</option><option value="pending">Pending</option></select></div>
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Medicine</th><th>Scheduled</th><th>Actual</th><th>Status</th></tr></thead><tbody id="history"></tbody></table></div>
+</main></div>
+<script>document.addEventListener("DOMContentLoaded",()=>{const u=currentUser();document.querySelectorAll("[data-user-name]").forEach(e=>e.textContent=u?.name||"");});</script>
+</body></html>
