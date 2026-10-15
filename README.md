@@ -26,6 +26,10 @@ make run
 
 ## Live URL
 
+staging url 
+https://medcare-staging.onrender.com/
+
+
 
 ## Health endpoint
 

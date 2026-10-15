@@ -1,0 +1,9 @@
+services:
+  medcare-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: medcare-frontend
+    ports:
+      - "8081:80"
+    restart: unless-stopped
