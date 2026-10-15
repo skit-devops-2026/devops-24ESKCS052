@@ -29,7 +29,8 @@ make run
 staging url 
 https://medcare-staging.onrender.com/
 
-
+production url
+https://medcarefsd-production.onrender.com
 
 ## Health endpoint
 
