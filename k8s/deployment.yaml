@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medcare-frontend
+  labels:
+    app: medcare-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: medcare-frontend
+  template:
+    metadata:
+      labels:
+        app: medcare-frontend
+    spec:
+      containers:
+        - name: medcare-frontend
+          image: ghcr.io/anshu230806/medcare-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
