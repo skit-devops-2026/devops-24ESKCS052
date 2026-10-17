@@ -14,9 +14,11 @@ spec:
       labels:
         app: medcare-frontend
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: medcare-frontend
-          image: ghcr.io/anshu230806/medcare-frontend:latest
+          image: ghcr.io/skit-devops-2026/devops-24eskcs052:9ce7f7d38065ea2e76705b680d869bfea55822f6
           imagePullPolicy: Always
           ports:
             - containerPort: 80
