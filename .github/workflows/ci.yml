@@ -57,32 +57,34 @@ jobs:
 
 
   # ---------------------------------------------------------------------------
-  # M4 — Containerization. Uncomment and complete when you get there.
+  # M4 — Jenkins pipeline 
+  #Containerization. Uncomment and complete when you get there.
   # The push to the registry is what proves your build actually ran, so it is
   # not optional.
   # ---------------------------------------------------------------------------
 
-  # docker:
-  #   name: Build and push images
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
-  #     - uses: docker/build-push-action@v6
-  #       with:
-  #         context: ./backend
-  #         push: true
-  #         tags: ghcr.io/${{ github.repository }}-backend:${{ github.sha }}
-  #     # ... and the same for ./frontend
+  docker:
+    name: Build and push images
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+      # ... and the same for ./frontend
 
   # ---------------------------------------------------------------------------
-  # M5 — Deployment. Add a deploy job here.
+  # M5 —Containerization 
+  # Deployment. Add a deploy job here.
   # ---------------------------------------------------------------------------
