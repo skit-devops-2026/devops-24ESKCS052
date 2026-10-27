@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: medcare
+      POSTGRES_USER: medcare_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_this_password}
+    ports: ["5432:5432"]
+    volumes: ["medcare_pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medcare_user -d medcare"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  medcare_pgdata:

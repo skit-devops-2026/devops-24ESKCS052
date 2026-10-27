@@ -1,0 +1,2 @@
+import {z} from 'zod';
+export const medicineSchema=z.object({body:z.object({name:z.string().trim().min(1).max(150),dosage:z.string().max(100).optional().default(''),instructions:z.string().max(500).optional().default(''),times:z.array(z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/)).min(1).max(12),stock:z.union([z.coerce.number().int().min(0),z.null()]).optional().default(null),pills_per_dose:z.coerce.number().int().min(1).max(100).default(1)})});
