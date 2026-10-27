@@ -1,7 +1,13 @@
-import { defineConfig } from "vite";
+
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     test: {
-        environment: "jsdom",
+        environment: 'jsdom',
+        exclude: [
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/backend/tests/**',
+        ],
     },
 });
