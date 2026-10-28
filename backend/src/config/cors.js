@@ -1,4 +1,3 @@
-
 import cors from 'cors';
 
 // Allowed React development server origins.

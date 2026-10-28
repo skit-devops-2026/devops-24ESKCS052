@@ -1,1 +1,9 @@
-import * as service from '../services/medicine.service.js';import {ensureDoses} from '../repositories/dose.repository.js';export const list=async(req,res)=>res.json(await service.list(req.user.id));export const create=async(req,res)=>{const m=await service.create(req.user.id,req.body);await ensureDoses(req.user.id);res.status(201).json(m)};export const update=async(req,res)=>res.json(await service.update(req.user.id,Number(req.params.id),req.body));export const remove=async(req,res)=>res.json(await service.archive(req.user.id,Number(req.params.id)));
+import * as service from '../services/medicine.service.js';
+import { ensureDoses } from '../repositories/dose.repository.js';
+export const list = async (req, res) => res.json(await service.list(req.user.id));
+export const create = async (req, res) => {
+    const m = await service.create(req.user.id, req.body);
+    await ensureDoses(req.user.id); res.status(201).json(m)
+};
+export const update = async (req, res) => res.json(await service.update(req.user.id, Number(req.params.id), req.body));
+export const remove = async (req, res) => res.json(await service.archive(req.user.id, Number(req.params.id)));

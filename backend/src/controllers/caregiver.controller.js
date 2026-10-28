@@ -1,6 +1,33 @@
-import * as service from '../services/caregiver.service.js';import * as patients from '../services/patient.service.js';import * as patientRepo from '../repositories/patient.repository.js';import * as doseRepo from '../repositories/dose.repository.js';import * as report from '../services/report.service.js';import * as caregivers from '../repositories/caregiver.repository.js';import {query} from '../config/db.js';import {ApiError} from '../utils/ApiError.js';
-export const link=async(req,res)=>res.status(201).json(await service.linkByCode(req.user,req.body.code));export const listPatients=async(req,res)=>res.json(await patients.linkedPatients(req.user.id));export const unlink=async(req,res)=>res.json(await service.unlink(Number(req.params.id),req.user.id));
-export const patientDetails=async(req,res)=>{const id=Number(req.params.id);await patients.assertPatientAccess(req.user,id);const p=await patients.getPatient(id);await doseRepo.ensureDoses(id);const [doses,meds,checkins,stats]=await Promise.all([doseRepo.todayDoses(id),query('SELECT * FROM medicines WHERE patient_id=$1 AND active=TRUE ORDER BY name',[id]),query('SELECT checkin_date::text AS date,mood,note FROM checkins WHERE patient_id=$1 ORDER BY checkin_date DESC LIMIT 7',[id]),report.report(id,14)]);res.json({patient:p,today:doses.rows,medicines:meds.rows,checkins:checkins.rows,report:stats})};
-export const patientReport=async(req,res)=>{const id=Number(req.params.id);await patients.assertPatientAccess(req.user,id);res.json(await report.report(id,Math.min(90,Math.max(1,Number(req.query.days)||30))))};
-export const patientCaregivers=async(req,res)=>res.json({invite_code:req.user.invite_code,caregivers:(await caregivers.listCaregivers(req.user.id)).rows});
-export const regenerateCode=async(req,res)=>{const {generateInviteCode}=await import('../utils/generateInviteCode.js');const r=await query('UPDATE users SET invite_code=$2,updated_at=NOW() WHERE id=$1 RETURNING invite_code',[req.user.id,generateInviteCode()]);res.json(r.rows[0])};
+import * as service from '../services/caregiver.service.js';
+import * as patients from '../services/patient.service.js';
+import * as patientRepo from '../repositories/patient.repository.js';
+import * as doseRepo from '../repositories/dose.repository.js';
+import * as report from '../services/report.service.js';
+import * as caregivers from '../repositories/caregiver.repository.js';
+import { query } from '../config/db.js'; import { ApiError } from '../utils/ApiError.js';
+
+export const link = async (req, res) => res.status(201).json(await service.linkByCode(req.user, req.body.code));
+export const listPatients = async (req, res) => res.json(await patients.linkedPatients(req.user.id));
+export const unlink = async (req, res) => res.json(await service.unlink(Number(req.params.id), req.user.id));
+export const patientDetails = async (req, res) => {
+    const id = Number(req.params.id);
+    await patients.assertPatientAccess(req.user, id);
+    const p = await patients.getPatient(id);
+    await doseRepo.ensureDoses(id);
+    const [doses, meds, checkins, stats] = await Promise.all(
+        [doseRepo.todayDoses(id),
+        query('SELECT * FROM medicines WHERE patient_id=$1 AND active=TRUE ORDER BY name', [id]),
+        query('SELECT checkin_date::text AS date,mood,note FROM checkins WHERE patient_id=$1 ORDER BY checkin_date DESC LIMIT 7', [id]),
+        report.report(id, 14)]); res.json({ patient: p, today: doses.rows, medicines: meds.rows, checkins: checkins.rows, report: stats })
+};
+export const patientReport = async (req, res) => {
+    const id = Number(req.params.id);
+    await patients.assertPatientAccess(req.user, id);
+    res.json(await report.report(id, Math.min(90, Math.max(1, Number(req.query.days) || 30))))
+};
+export const patientCaregivers = async (req, res) => res.json({ invite_code: req.user.invite_code, caregivers: (await caregivers.listCaregivers(req.user.id)).rows });
+export const regenerateCode = async (req, res) => {
+    const { generateInviteCode } = await import('../utils/generateInviteCode.js');
+    const r = await query('UPDATE users SET invite_code=$2,updated_at=NOW() WHERE id=$1 RETURNING invite_code', [req.user.id, generateInviteCode()]);
+    res.json(r.rows[0])
+};

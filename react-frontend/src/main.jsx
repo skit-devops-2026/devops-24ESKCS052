@@ -6,5 +6,9 @@ import './styles.css';
 
 // Mount the React application inside the HTML root and enable client-side routing.
 createRoot(document.getElementById('root')).render(
-  <React.StrictMode><BrowserRouter><App /></BrowserRouter></React.StrictMode>,
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
 );

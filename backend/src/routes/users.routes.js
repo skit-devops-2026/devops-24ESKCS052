@@ -1,1 +1,11 @@
-import {Router} from 'express';import {authenticate} from '../middleware/authenticate.js';import {validateRequest} from '../middleware/validateRequest.js';import {settingsSchema} from '../validators/user.validator.js';import {asyncHandler} from '../utils/asyncHandler.js';import {settings} from '../controllers/user.controller.js';const r=Router();r.use(authenticate);r.patch('/settings',validateRequest(settingsSchema),asyncHandler(settings));export default r;
+import { Router } from 'express';
+import { authenticate } from '../middleware/authenticate.js';
+import { validateRequest } from '../middleware/validateRequest.js';
+import { settingsSchema } from '../validators/user.validator.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { settings } from '../controllers/user.controller.js';
+
+const r = Router();
+r.use(authenticate);
+r.patch('/settings', validateRequest(settingsSchema), asyncHandler(settings));
+export default r;

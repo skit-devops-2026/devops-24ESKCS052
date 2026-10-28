@@ -1,1 +1,4 @@
-import * as service from '../services/dose.service.js';export const today=async(req,res)=>res.json(await service.today(req.user.id));export const history=async(req,res)=>res.json(await service.history(req.user.id,Math.min(90,Math.max(1,Number(req.query.days)||30))));export const action=async(req,res)=>res.json(await service.act(req.user.id,Number(req.params.id),req.params.action,req.user.snooze_minutes));
+import * as service from '../services/dose.service.js';
+export const today = async (req, res) => res.json(await service.today(req.user.id));
+export const history = async (req, res) => res.json(await service.history(req.user.id, Math.min(90, Math.max(1, Number(req.query.days) || 30))));
+export const action = async (req, res) => res.json(await service.act(req.user.id, Number(req.params.id), req.params.action, req.user.snooze_minutes));
