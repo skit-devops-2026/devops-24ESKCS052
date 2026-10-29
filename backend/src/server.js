@@ -1,25 +1,55 @@
+// import app from './app.js';
+// import { env } from './config/env.js';
+// import { pool, checkDatabaseConnection } from './config/db.js';
+// import { logger } from './config/logger.js';
+// import { startReminderJob, stopReminderJob } from './jobs/reminder.job.js';
+// let server; async function start() {
+//     try {
+//         await checkDatabaseConnection();
+//         server = app.listen(env.PORT, '0.0.0.0', () => logger.info('MedCare API listening', { port: env.PORT }));
+//         startReminderJob()
+//     }
+//     catch (e) {
+//         logger.error('Startup failed', { message: e.message });
+//         await pool.end();
+//         process.exitCode = 1
+//     }
+// }
+// async function shutdown(signal) {
+//     logger.info('Shutdown requested', { signal });
+//     stopReminderJob(); if (server)
+//         await new Promise(resolve => server.close(resolve));
+//     await pool.end(); process.exit(0)
+// } process.once('SIGINT', () => void shutdown('SIGINT'));
+// process.once('SIGTERM', () => void shutdown('SIGTERM'));
+// void start();
+
+
 import app from './app.js';
 import { env } from './config/env.js';
-import { pool, checkDatabaseConnection } from './config/db.js';
+import { connectDatabase, checkDatabaseConnection, closeDatabase } from './config/db.js';
 import { logger } from './config/logger.js';
 import { startReminderJob, stopReminderJob } from './jobs/reminder.job.js';
-let server; async function start() {
+let server;
+async function start() {
     try {
+        await connectDatabase();
         await checkDatabaseConnection();
         server = app.listen(env.PORT, '0.0.0.0', () => logger.info('MedCare API listening', { port: env.PORT }));
-        startReminderJob()
-    }
-    catch (e) {
+        startReminderJob();
+    } catch (e) {
         logger.error('Startup failed', { message: e.message });
-        await pool.end();
-        process.exitCode = 1
+        await closeDatabase();
+        process.exitCode = 1;
     }
 }
 async function shutdown(signal) {
     logger.info('Shutdown requested', { signal });
-    stopReminderJob(); if (server)
-        await new Promise(resolve => server.close(resolve));
-    await pool.end(); process.exit(0)
-} process.once('SIGINT', () => void shutdown('SIGINT'));
+    stopReminderJob();
+    if (server) await new Promise(resolve => server.close(resolve));
+    await closeDatabase();
+    process.exit(0);
+}
+process.once('SIGINT', () => void shutdown('SIGINT'));
 process.once('SIGTERM', () => void shutdown('SIGTERM'));
 void start();
